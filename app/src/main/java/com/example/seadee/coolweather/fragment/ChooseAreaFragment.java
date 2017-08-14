@@ -2,6 +2,7 @@ package com.example.seadee.coolweather.fragment;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.seadee.coolweather.R;
+import com.example.seadee.coolweather.activity.MainActivity;
+import com.example.seadee.coolweather.activity.WeatherActivity;
 import com.example.seadee.coolweather.db.City;
 import com.example.seadee.coolweather.db.County;
 import com.example.seadee.coolweather.db.Province;
@@ -94,6 +97,20 @@ public class ChooseAreaFragment extends Fragment{
                 } else if(currentLevel == LEVEL_CITY){
                     selectedCity = cityList.get(position);
                     queryCounties();
+                }else if(currentLevel == LEVEL_COUNTY){
+                    String weatherId = countyList.get(position).getWeatherId();
+                    if(getActivity() instanceof MainActivity){
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id",weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }else if(getActivity() instanceof  WeatherActivity){
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefreshLayout.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
+
                 }
             }
         });
